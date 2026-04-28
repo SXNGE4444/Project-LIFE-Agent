@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIFE Agent — Command Dashboard</title>
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #12121a; --border: #1e1e2e;
+            --text: #e0e0e0; --text-dim: #666;
+            --critical: #ff3333; --high: #ff6b35; --medium: #ffd700; --low: #00cc66;
+            --accent: #e94560; --accent-glow: rgba(233, 69, 96, 0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 16px; padding: 16px; max-width: 1600px; margin: 0 auto; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .card-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .status-active { background: var(--low); box-shadow: 0 0 8px var(--low); }
+        .status-warning { background: var(--medium); box-shadow: 0 0 8px var(--medium); }
+        .status-critical { background: var(--critical); box-shadow: 0 0 8px var(--critical); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .metric { text-align: center; padding: 12px; }
+        .metric-value { font-size: 48px; font-weight: 700; line-height: 1; }
+        .metric-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-top: 8px; }
+        .metric-critical { color: var(--critical); } .metric-high { color: var(--high); }
+        .metric-medium { color: var(--medium); } .metric-low { color: var(--low); }
+        .threat-bar { height: 6px; background: var(--border); border-radius: 3px; margin: 8px 0; overflow: hidden; }
+        .threat-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+        .threat-fill.critical { background: var(--critical); } .threat-fill.high { background: var(--high); }
+        .threat-fill.medium { background: var(--medium); }
+        .platform-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .platform-name { font-size: 13px; }
+        .platform-threat { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+        .threat-critical { background: rgba(255,51,51,0.2); color: var(--critical); }
+        .threat-high { background: rgba(255,107,53,0.2); color: var(--high); }
+        .threat-medium { background: rgba(255,215,0,0.2); color: var(--medium); }
+        .alert-item { padding: 10px; margin: 8px 0; border-left: 3px solid var(--critical); background: rgba(255,51,51,0.1); border-radius: 0 4px 4px 0; font-size: 12px; line-height: 1.5; }
+        .alert-high { border-color: var(--high); background: rgba(255,107,53,0.1); }
+        .alert-medium { border-color: var(--medium); background: rgba(255,215,0,0.1); }
+        .log-stream { height: 300px; overflow-y: auto; font-size: 11px; line-height: 1.6; color: var(--text-dim); }
+        .log-line { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .log-time { color: #555; } .log-module { color: var(--accent); } .log-critical { color: var(--critical); }
+        .btn { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn:hover { background: #c73e54; box-shadow: 0 0 20px var(--accent-glow); }
+        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .full-width { grid-column: 1 / -1; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; padding: 8px; } .metric-value { font-size: 32px; } }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <div class="card full-width">
+            <div class="card-header">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <span class="status-dot status-active"></span>
+                    <span class="card-title">⚡ LIFE AGENT — ACTIVE</span>
+                </div>
+                <div class="btn-group">
+                    <button class="btn" onclick="alert('DSAR Campaign Initiated!')">Execute DSAR Campaign</button>
+                    <button class="btn btn-outline" onclick="toggleSwarm()">Swarm: Connected</button>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;">
+                <div class="metric"><div class="metric-value metric-critical" id="threat-count">47</div><div class="metric-label">Threats Today</div></div>
+                <div class="metric"><div class="metric-value metric-high" id="tracker-count">1,247</div><div class="metric-label">Trackers Blocked</div></div>
+                <div class="metric"><div class="metric-value metric-medium" id="dsar-count">12</div><div class="metric-label">DSARs Active</div></div>
+                <div class="metric"><div class="metric-value metric-low" id="swarm-peers">847</div><div class="metric-label">Swarm Peers</div></div>
+                <div class="metric"><div class="metric-value" id="autonomy-score" style="color:var(--accent);">73</div><div class="metric-label">Autonomy Score</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><span class="card-title">🎯 Threat Landscape</span><span class="status-dot status-warning"></span></div>
+            <div id="platform-list">
+                <div class="platform-row"><span class="platform-name">Facebook</span><span class="platform-threat threat-critical">CRITICAL</span></div>
+                <div class="threat-bar"><div class="threat-fill critical" style="width:92%"></div></div>
+                <div class="platform-row"><span class="platform-name">TikTok</span><span class="platform-threat threat-critical">CRITICAL</span></div>
+                <div class="threat-bar"><div class="threat-fill critical" style="width:88%"></div></div>
+                <div class="platform-row"><span class="platform-name">Google</span><span class="platform-threat threat-high">HIGH</span></div>
+                <div class="threat-bar"><div class="threat-fill high" style="width:75%"></div></div>
+                <div class="platform-row"><span class="platform-name">Amazon</span><span class="platform-threat threat-high">HIGH</span></div>
+                <div class="threat-bar"><div class="threat-fill high" style="width:68%"></div></div>
+                <div class="platform-row"><span class="platform-name">Instagram</span><span class="platform-threat threat-medium">MEDIUM</span></div>
+                <div class="threat-bar"><div class="threat-fill medium" style="width:55%"></div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><span class="card-title">🚨 Active Alerts</span><span class="status-dot status-critical"></span></div>
+            <div class="alert-item"><strong>Intent Fingerprinting Detected</strong><br>Your creative work patterns are being profiled by 3 platforms.<br><small style="color:#666;">2 minutes ago</small></div>
+            <div class="alert-item alert-high"><strong>Dark Pattern Sequence Active</strong><br>Scarcity trap detected. 4 manipulation phases observed.<br><small style="color:#666;">8 minutes ago</small></div>
+            <div class="alert-item alert-medium"><strong>New Tracker Network Identified</strong><br>17 new tracking domains added from swarm intelligence.<br><small style="color:#666;">23 minutes ago</small></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><span class="card-title">⚙️ Module Status</span></div>
+            <div class="platform-row"><span>[L] Legibility Engine</span><span style="color:var(--low);">● Active</span></div>
+            <div class="platform-row"><span>[I] Inversion Protocol</span><span style="color:var(--low);">● Active</span></div>
+            <div class="platform-row"><span>[F] Fractal Intent Shield</span><span style="color:var(--low);">● Active</span></div>
+            <div class="platform-row"><span>[E] Economic Swarm</span><span style="color:var(--low);">● Connected (847 peers)</span></div>
+        </div>
+
+        <div class="card full-width">
+            <div class="card-header"><span class="card-title">📜 Event Log</span><button class="btn btn-outline" onclick="document.getElementById('log-stream').innerHTML=''">Clear</button></div>
+            <div class="log-stream" id="log-stream">
+                <div class="log-line"><span class="log-time">14:32:17</span> <span class="log-module">[L]</span> Dark pattern detected: false_scarcity on amazon.com</div>
+                <div class="log-line"><span class="log-time">14:32:15</span> <span class="log-module">[F]</span> Intent shield: blocked fingerprinting on creative work</div>
+                <div class="log-line"><span class="log-time">14:32:10</span> <span class="log-module">[I]</span> DSAR acknowledged by Meta (case #LIFE-2024-0892)</div>
+                <div class="log-line"><span class="log-time">14:32:08</span> <span class="log-module">[E]</span> Swarm: 15 agents signal exit intent for TikTok</div>
+                <div class="log-line"><span class="log-time">14:32:01</span> <span class="log-module">[L]</span> <span class="log-critical">CRITICAL: Session recording detected (FullStory)</span></div>
+                <div class="log-line"><span class="log-time">14:31:55</span> <span class="log-module">[F]</span> Protected intent: novel_draft (hash: 7a3f...b2e1)</div>
+                <div class="log-line"><span class="log-time">14:31:42</span> <span class="log-module">[E]</span> Swarm intel updated: 3 platforms critical</div>
+                <div class="log-line"><span class="log-time">14:31:30</span> <span class="log-module">[I]</span> DSAR sent to Oracle Data Cloud</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateMetrics() {
+            setInterval(() => {
+                const threatCount = document.getElementById('threat-count');
+                threatCount.textContent = parseInt(threatCount.textContent) + Math.floor(Math.random() * 3);
+                const autonomyScore = document.getElementById('autonomy-score');
+                autonomyScore.textContent = Math.min(100, Math.max(0, parseInt(autonomyScore.textContent) + Math.floor(Math.random() * 3) - 1));
+            }, 5000);
+        }
+        function toggleSwarm() {
+            const btn = document.querySelector('.btn-outline');
+            if (btn.textContent.includes('Connected')) {
+                btn.textContent = 'Swarm: Disconnected';
+                document.getElementById('swarm-peers').textContent = '0';
+            } else {
+                btn.textContent = 'Swarm: Connected';
+                document.getElementById('swarm-peers').textContent = '847';
+            }
+        }
+        const modules = ['L', 'I', 'F', 'E'];
+        const messages = ['Dark pattern detected', 'Tracker blocked', 'DSAR response received', 'Intent protected', 'Swarm peer connected', 'New threat intelligence', 'Session recording blocked'];
+        setInterval(() => {
+            const log = document.getElementById('log-stream');
+            const time = new Date().toLocaleTimeString();
+            const module = modules[Math.floor(Math.random() * modules.length)];
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            line.innerHTML = `<span class="log-time">${time}</span> <span class="log-module">[${module}]</span> ${Math.random() < 0.15 ? '<span class="log-critical">' + message + '</span>' : message}`;
+            log.insertBefore(line, log.firstChild);
+        }, 8000);
+        updateMetrics();
+    </script>
+</body>
+</html>
