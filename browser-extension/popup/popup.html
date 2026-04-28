@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>LIFE Agent — Harm Report</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="life-header">
+    <h1>⚡ LIFE Agent</h1>
+    <span class="life-badge">Legibility Engine</span>
+  </header>
+
+  <main id="harm-report">
+    <div id="loading">Scanning page...</div>
+    <div id="report-content" style="display:none;">
+      <div class="report-summary" id="summary"></div>
+      <div class="report-sections">
+        <section id="critical-section">
+          <h3>🔴 Critical Deceptions</h3>
+          <ul id="critical-list"></ul>
+        </section>
+        <section id="high-section">
+          <h3>🟠 High-Severity Manipulations</h3>
+          <ul id="high-list"></ul>
+        </section>
+        <section id="recommendations-section">
+          <h3>🛡️ Recommendations</h3>
+          <ul id="recommendations-list"></ul>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <button id="rescan-btn" class="life-btn">Rescan Page</button>
+    <a href="https://github.com/SXNGE4444/Project-LIFE-Agent" target="_blank" class="life-link">GitHub</a>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+Subject: Data Subject Access Request — Article 15 GDPR
+
+To: {company_name} Data Protection Officer
+
+Date: {date}
+
+Dear Data Protection Officer,
+
+Under Article 15 of the General Data Protection Regulation (GDPR), I hereby
+request access to all personal data you process concerning me. This request
+covers, but is not limited to:
+
+1. A copy of all personal data you hold about me, including inferred,
+   derived, and observed data, across ALL systems and databases.
+2. The purposes of the processing for EACH category of data.
+3. The categories of personal data concerned.
+4. The recipients or categories of recipients to whom the personal data
+   has been or will be disclosed, including recipients in third countries.
+5. Where possible, the envisaged period for which the data will be stored.
+6. The existence of automated decision-making, including profiling, and
+   meaningful information about the logic involved.
+7. The source of the data if not collected directly from me.
+8. Whether my data has been used for any form of testing, training, or
+   model development, including machine learning models.
+
+My identifying information:
+- Name: {full_name}
+- Email: {email}
+
+I request this information in a structured, commonly used, and machine-
+readable format (JSON preferred) as per Article 20.
+
+Please confirm receipt within 48 hours. Under GDPR, you must respond
+without undue delay and within one month.
+
+Sincerely,
+{full_name}

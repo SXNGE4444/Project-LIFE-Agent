@@ -1,0 +1,8 @@
+ollama:
+  base_url: "http://localhost:11434"
+  model: "llama3.2:3b"
+
+vault:
+  storage_path: "~/.life-agent/intent_vault"
+  encryption: "local-only"
+  scan_interval_minutes: 60

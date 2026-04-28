@@ -1,0 +1,20 @@
+Subject: California Consumer Privacy Act — Request to Know
+
+To: {company_name}
+
+Date: {date}
+
+Under the California Consumer Privacy Act (CCPA), I request that you
+disclose the following:
+
+1. The categories of personal information you have collected about me.
+2. The sources from which my personal information is collected.
+3. The business purpose for collecting my personal information.
+4. The categories of third parties with whom you share my information.
+5. The specific pieces of personal information you hold about me.
+
+Name: {full_name}
+Email: {email}
+
+Sincerely,
+{full_name}

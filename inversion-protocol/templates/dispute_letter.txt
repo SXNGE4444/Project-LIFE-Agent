@@ -1,0 +1,18 @@
+Subject: Formal Dispute — Incorrect Personal Data
+
+To: {company_name}
+
+Date: {date}
+
+I am writing to formally dispute the accuracy of personal data held
+by your organization.
+
+Disputed Information: {disputed_info}
+Correct Information: {correct_info}
+Evidence Attached: {evidence_summary}
+
+Under applicable data protection regulations, you are required to
+rectify inaccurate personal data without undue delay.
+
+Sincerely,
+{full_name}

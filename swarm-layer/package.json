@@ -1,0 +1,17 @@
+{
+  "name": "life-agent-swarm",
+  "version": "0.1.0",
+  "description": "Economic Shock Swarm coordination layer",
+  "type": "module",
+  "main": "swarm_node.js",
+  "dependencies": {
+    "libp2p": "^1.2.0",
+    "@libp2p/webrtc": "^4.0.0",
+    "@chainsafe/libp2p-noise": "^15.0.0",
+    "@chainsafe/libp2p-yamux": "^6.0.0",
+    "@chainsafe/libp2p-gossipsub": "^13.0.0",
+    "@libp2p/identify": "^2.0.0",
+    "@libp2p/peer-id-factory": "^4.0.0",
+    "uint8arrays": "^5.0.0"
+  }
+}

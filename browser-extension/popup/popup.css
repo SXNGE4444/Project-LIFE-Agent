@@ -1,0 +1,102 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 380px;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  font-size: 13px;
+}
+
+.life-header {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  padding: 16px;
+  border-bottom: 2px solid #e94560;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.life-header h1 {
+  font-size: 18px;
+  color: #e94560;
+}
+
+.life-badge {
+  background: #e94560;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+#harm-report {
+  padding: 16px;
+  min-height: 200px;
+}
+
+#loading {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.report-summary {
+  background: #1a1a2e;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  border-left: 3px solid #e94560;
+}
+
+.report-sections section {
+  margin-bottom: 16px;
+}
+
+.report-sections h3 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.report-sections ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.report-sections li {
+  background: #111;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+footer {
+  padding: 12px 16px;
+  border-top: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.life-btn {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.life-btn:hover {
+  background: #c73e54;
+}
+
+.life-link {
+  color: #888;
+  text-decoration: none;
+  font-size: 11px;
+}

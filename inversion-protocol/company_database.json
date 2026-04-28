@@ -1,0 +1,22 @@
+{
+  "companies": [
+    {
+      "name": "Google",
+      "legal_name": "Google LLC",
+      "jurisdiction": "US",
+      "dpo_email": "data-protection-office@google.com",
+      "privacy_email": "privacy@google.com",
+      "risk_score": 10,
+      "known_data_categories": ["search", "location", "browsing", "email", "video", "social"]
+    },
+    {
+      "name": "Meta",
+      "legal_name": "Meta Platforms, Inc.",
+      "jurisdiction": "US",
+      "dpo_email": "dpo@meta.com",
+      "privacy_email": "privacy@meta.com",
+      "risk_score": 10,
+      "known_data_categories": ["social", "browsing", "location", "biometric"]
+    }
+  ]
+}

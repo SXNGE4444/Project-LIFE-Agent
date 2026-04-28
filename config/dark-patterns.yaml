@@ -1,15 +1,134 @@
-# Dark Patterns Taxonomy
+# Dark Pattern Taxonomy v1.0 — Project LIFE Agent
+# Harmonized from 10 existing regulatory and academic taxonomies
+# Each pattern is a confession embedded in code.
 
-This file contains a list of dark patterns according to the taxonomy established by various organizations.
+categories:
 
-### Types of Dark Patterns
+  - id: urgency
+    name: "False Urgency"
+    description: "Creates artificial time pressure to bypass rational decision-making."
+    detection_signatures:
+      - pattern: "Only {N} left in stock"
+        severity: high
+        check: "Compare claimed stock count against DOM data attributes"
+      - pattern: "Sale ends in {countdown_timer}"
+        severity: critical
+        check: "Monitor timer reset on page reload"
+      - pattern: "{N} people are viewing this right now"
+        severity: high
+        check: "Check for randomized number generation in JS"
+    harm_report: "This site is fabricating scarcity to force impulsive purchases."
 
-1. **Bait and Switch**: A user sets out to do one thing but a different, often undesirable, action is taken instead.
-2. **Roach Motel**: Getting into a situation is easy, but getting out of it is difficult.
-3. **Confirmshaming**: Guilt tripping the user into opting into something.
-4. **Hidden Costs**: Extra charges that are not clearly disclosed.
-5. **Privacy Zuckering**: This occurs when a user is tricked into publicly sharing personal information.
+  - id: misdirection
+    name: "Visual Misdirection"
+    description: "Uses color, size, or placement to guide you toward the exploitative choice."
+    detection_signatures:
+      - pattern: "Accept All Cookies" (prominent) vs "Manage Settings" (hidden/minimal)
+        severity: medium
+        check: "Compare visual prominence: size, color contrast, position"
+      - pattern: "Subscribe button larger than unsubscribe link"
+        severity: high
+        check: "Measure element dimensions and color contrast ratios"
+      - pattern: "Pre-checked boxes for recurring billing during signup"
+        severity: critical
+        check: "Detect default-checked input elements in payment flows"
+    harm_report: "This interface is designed to trick your visual perception into the choice that benefits them."
 
----
+  - id: forced_action
+    name: "Forced Action"
+    description: "Requires an unrelated action before granting access to what you want."
+    detection_signatures:
+      - pattern: "Sign up to continue reading"
+        severity: high
+        check: "Detect content blurring or overlay blocking scroll"
+      - pattern: "Share on social media to unlock content"
+        severity: medium
+        check: "Identify conditional content reveal tied to share buttons"
+      - pattern: "Required newsletter signup during checkout"
+        severity: high
+        check: "Detect mandatory non-purchase fields in checkout forms"
+    harm_report: "Your access to content is being held hostage for your data or social reach."
 
-*Note: This is a simplified excerpt.*
+  - id: sneaking
+    name: "Sneaking"
+    description: "Adds items or costs without explicit consent."
+    detection_signatures:
+      - pattern: "Items added to cart silently"
+        severity: critical
+        check: "Monitor cart API calls for items not explicitly added by user"
+      - pattern: "Hidden fees revealed only at final checkout step"
+        severity: critical
+        check: "Compare displayed price early in flow vs final total"
+      - pattern: "Auto-renewal enabled by default"
+        severity: high
+        check: "Detect default-checked subscription auto-renewal toggles"
+    harm_report: "Additional costs or items were added without your explicit knowledge."
+
+  - id: obstruction
+    name: "Obstruction"
+    description: "Makes the user-friendly action deliberately difficult."
+    detection_signatures:
+      - pattern: "Cancel subscription requires phone call"
+        severity: critical
+        check: "Detect absence of one-click cancellation option"
+      - pattern: "Delete account hidden behind multiple menus"
+        severity: high
+        check: "Measure click depth to reach account deletion option"
+      - pattern: "Cookie rejection requires more clicks than acceptance"
+        severity: medium
+        check: "Count click differences between accept and reject flows"
+    harm_report: "This company deliberately makes it hard to leave or protect your privacy."
+
+  - id: confirmshaming
+    name: "Confirmshaming"
+    description: "Uses emotional manipulation to guilt you into a choice."
+    detection_signatures:
+      - pattern: "\"No thanks, I don't want to save money\""
+        severity: medium
+        check: "Detect emotionally loaded decline option text"
+      - pattern: "\"I don't care about my privacy\""
+        severity: high
+        check: "Scan for guilt-inducing language in opt-out buttons"
+    harm_report: "This interface manipulates your emotions to extract data or money."
+
+  - id: social_proof_fabrication
+    name: "Fabricated Social Proof"
+    description: "Displays fake activity, reviews, or popularity signals."
+    detection_signatures:
+      - pattern: "\"{FirstName} from {City} just bought this\""
+        severity: high
+        check: "Check for randomized name/location generation in JS"
+      - pattern: "Fake reviews with generic avatars"
+        severity: critical
+        check: "Analyze review metadata for bot-like patterns"
+      - pattern: "Artificially inflated rating counts"
+        severity: medium
+        check: "Compare visible rating count with structured data markup"
+    harm_report: "Social proof signals on this page may be fabricated to manipulate trust."
+
+  - id: hidden_information
+    name: "Hidden Information"
+    description: "Conceals or obscures material facts the user needs to make an informed choice."
+    detection_signatures:
+      - pattern: "Key terms hidden in expandable sections"
+        severity: high
+        check: "Detect critical info placed inside unexpanded accordion elements"
+      - pattern: "Pricing details in extremely small font"
+        severity: medium
+        check: "Measure font-size below 10px for pricing information"
+      - pattern: "Comparison charts omitting unfavorable features"
+        severity: medium
+        check: "Cross-reference product specs with independent sources"
+    harm_report: "Material information has been deliberately hidden from your view."
+
+  - id: nagging
+    name: "Nagging"
+    description: "Repeatedly interrupts user flow with unwanted requests."
+    detection_signatures:
+      - pattern: "Repeated newsletter popups on every page"
+        severity: medium
+        check: "Track popup frequency per session"
+      - pattern: "App download prompts interrupting mobile web"
+        severity: high
+        check: "Detect full-screen app store interstitials"
+    harm_report: "This site repeatedly interrupts your experience to pressure compliance."
