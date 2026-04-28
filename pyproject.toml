@@ -1,0 +1,31 @@
+[project]
+name = "project-life-agent"
+version = "0.1.0"
+description = "Liberated Intelligence For Empowerment — The immune system for digital autonomy"
+authors = [{name = "Project LIFE Agent Contributors"}]
+readme = "README.md"
+license = {text = "AGPL-3.0"}
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+
+dependencies = [
+    "beautifulsoup4>=4.12",
+    "requests>=2.31",
+    "pyyaml>=6.0",
+    "dataclasses-json>=0.6",
+]
+
+[project.optional-dependencies]
+browser = ["selenium>=4.15", "playwright>=1.40"]
+ml = ["torch>=2.1", "transformers>=4.35", "datasets>=2.15", "scikit-learn>=1.3"]
+swarm = ["libp2p>=0.1"]
+
+[project.scripts]
+life-agent = "core.life_agent:main"
+dsar-orchestrator = "inversion_protocol.dsar_orchestrator:main"
+dataset-builder = "ml_training.prepare_dataset:main"
