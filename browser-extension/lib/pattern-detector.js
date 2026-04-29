@@ -1,74 +1,135 @@
-// pattern-detector.js — Project LIFE Agent
-// Structural Transparency: The architecture IS the confession.
-// We ignore press releases. We read the code.
+// pattern-detector.js — Project LIFE Agent (Memory-Safe)
+// Hard limits prevent browser crash on heavy pages
 
 class DarkPatternDetector {
   constructor() {
     this.taxonomy = null;
     this.detections = [];
+    this.MAX_DETECTIONS = 20;    // Never store more than 20
+    this.MAX_DOM_NODES = 5000;   // Skip pages with 5000+ elements
+    this.MAX_TEXT_LENGTH = 50000; // Only check first 50KB of text
   }
 
   async loadTaxonomy() {
-    try {
-      const url = chrome.runtime.getURL('config/dark-patterns.yaml');
-      const response = await fetch(url);
-      const yamlText = await response.text();
-      this.taxonomy = this.parseYAML(yamlText);
-      console.log(`[LIFE] Taxonomy loaded: ${this.taxonomy.categories.length} categories`);
-    } catch (error) {
-      console.error('[LIFE] Failed to load taxonomy:', error);
-    }
-  }
-
-  parseYAML(yamlText) {
-    const categories = [];
-    let currentCategory = null;
-    let currentSignature = null;
-
-    const lines = yamlText.split('\n');
-    for (const line of lines) {
-      if (line.startsWith('  - id:')) {
-        currentCategory = { id: line.split(':')[1].trim(), signatures: [] };
-        categories.push(currentCategory);
-      } else if (currentCategory && line.includes('name:')) {
-        currentCategory.name = line.split('name:')[1].trim();
-      } else if (currentCategory && line.includes('severity:')) {
-        currentCategory.severity = line.split('severity:')[1].trim();
-      } else if (currentCategory && line.includes('pattern:')) {
-        currentSignature = {
-          pattern: line.split('pattern:')[1].trim().replace(/^"|"$/g, '').replace('{N}', '\\\\d+'),
-          severity: currentCategory.severity
-        };
-        currentCategory.signatures.push(currentSignature);
-      } else if (currentSignature && line.includes('check:')) {
-        currentSignature.check = line.split('check:')[1].trim();
-      } else if (currentCategory && line.includes('harm_report:')) {
-        currentCategory.harmReport = line.split('harm_report:')[1].trim().replace(/^"|"$/g, '');
-      }
-    }
-    return { categories };
+    // Built-in taxonomy (no external fetch = no crash risk)
+    this.taxonomy = {
+      "categories": [
+        {
+          "id": "urgency", "name": "False Urgency", "severity": "high",
+          "signatures": [
+            { "pattern": "only \\d+ left", "severity": "high", "check": "stock_claim" },
+            { "pattern": "sale ends in", "severity": "critical", "check": "countdown" },
+            { "pattern": "\\d+ people.*viewing", "severity": "high", "check": "social_pressure" },
+            { "pattern": "just (bought|purchased)", "severity": "high", "check": "fake_activity" },
+            { "pattern": "limited time", "severity": "medium", "check": "time_pressure" },
+            { "pattern": "selling fast", "severity": "high", "check": "scarcity" },
+            { "pattern": "act now", "severity": "medium", "check": "urgency_cta" }
+          ],
+          "harmReport": "This site fabricates scarcity to force impulsive purchases."
+        },
+        {
+          "id": "misdirection", "name": "Visual Misdirection", "severity": "medium",
+          "signatures": [
+            { "pattern": "accept all cookies", "severity": "medium", "check": "cookie_accept" },
+            { "pattern": "subscribe", "severity": "medium", "check": "subscribe_btn" },
+            { "pattern": "recommended", "severity": "medium", "check": "recommended_highlight" }
+          ],
+          "harmReport": "This interface tricks your visual perception."
+        },
+        {
+          "id": "forced_action", "name": "Forced Action", "severity": "high",
+          "signatures": [
+            { "pattern": "sign.*up.*to.*continue", "severity": "high", "check": "forced_registration" },
+            { "pattern": "create.*account.*to", "severity": "high", "check": "forced_account" },
+            { "pattern": "subscribe.*to.*read", "severity": "high", "check": "forced_subscription" }
+          ],
+          "harmReport": "Your access is held hostage for your data."
+        },
+        {
+          "id": "sneaking", "name": "Sneaking", "severity": "critical",
+          "signatures": [
+            { "pattern": "pre.?checked", "severity": "critical", "check": "prechecked_input" },
+            { "pattern": "auto.?renew", "severity": "high", "check": "auto_renewal" },
+            { "pattern": "service fee", "severity": "critical", "check": "hidden_fee" },
+            { "pattern": "processing fee", "severity": "critical", "check": "hidden_fee" }
+          ],
+          "harmReport": "Costs added without your explicit consent."
+        },
+        {
+          "id": "obstruction", "name": "Obstruction", "severity": "critical",
+          "signatures": [
+            { "pattern": "call.*to.*cancel", "severity": "critical", "check": "phone_cancel" },
+            { "pattern": "delete.*account", "severity": "high", "check": "delete_hidden" }
+          ],
+          "harmReport": "This company makes it hard to leave."
+        },
+        {
+          "id": "confirmshaming", "name": "Confirmshaming", "severity": "medium",
+          "signatures": [
+            { "pattern": "i don'?t want to save", "severity": "medium", "check": "guilt_saving" },
+            { "pattern": "i don'?t care about", "severity": "high", "check": "guilt_care" }
+          ],
+          "harmReport": "This manipulates your emotions through shame."
+        },
+        {
+          "id": "social_proof_fabrication", "name": "Fake Social Proof", "severity": "high",
+          "signatures": [
+            { "pattern": "\\w+ from \\w+ just", "severity": "high", "check": "fake_location" },
+            { "pattern": "verified purchase", "severity": "medium", "check": "verify_badge" }
+          ],
+          "harmReport": "Social proof may be fabricated."
+        },
+        {
+          "id": "hidden_information", "name": "Hidden Information", "severity": "high",
+          "signatures": [
+            { "pattern": "\\+ tax", "severity": "critical", "check": "hidden_tax" },
+            { "pattern": "additional fees", "severity": "critical", "check": "hidden_fees" },
+            { "pattern": "terms.*conditions", "severity": "medium", "check": "hidden_terms" }
+          ],
+          "harmReport": "Material information deliberately hidden."
+        },
+        {
+          "id": "nagging", "name": "Nagging", "severity": "medium",
+          "signatures": [
+            { "pattern": "open in app", "severity": "high", "check": "app_nag" },
+            { "pattern": "turn on notification", "severity": "high", "check": "notif_nag" }
+          ],
+          "harmReport": "This site repeatedly interrupts you."
+        }
+      ]
+    };
+    console.log('[LIFE] Taxonomy ready (' + this.taxonomy.categories.length + ' categories)');
   }
 
   scan(document) {
-    if (!this.taxonomy) {
-      console.error('[LIFE] Taxonomy not loaded. Call loadTaxonomy() first.');
+    // MEMORY GUARDS
+    if (!document.body) return [];
+    
+    // Skip huge pages
+    if (document.querySelectorAll('*').length > this.MAX_DOM_NODES) {
+      console.debug('[LIFE] Skip: too many DOM nodes');
       return [];
     }
-
+    
+    if (!this.taxonomy) {
+      console.debug('[LIFE] Taxonomy not loaded');
+      return [];
+    }
+    
     this.detections = [];
-    const pageText = document.body.innerText;
-    const pageHTML = document.documentElement.outerHTML;
-
+    
+    // Only check first 50KB of text
+    const bodyText = (document.body.innerText || '').substring(0, this.MAX_TEXT_LENGTH).toLowerCase();
+    
     for (const category of this.taxonomy.categories) {
+      if (this.detections.length >= this.MAX_DETECTIONS) break;
+      
       for (const signature of category.signatures) {
-        const regex = new RegExp(signature.pattern.replace('{N}', '\\d+'), 'gi');
-        const textMatch = regex.test(pageText);
-        const htmlMatch = regex.test(pageHTML);
-
-        if (textMatch || htmlMatch) {
-          const detectionResult = this.applyCheck(signature, category, document);
-
-          if (detectionResult) {
+        if (this.detections.length >= this.MAX_DETECTIONS) break;
+        
+        try {
+          const regex = new RegExp(signature.pattern, 'gi');
+          if (regex.test(bodyText)) {
             this.detections.push({
               categoryId: category.id,
               categoryName: category.name,
@@ -76,80 +137,31 @@ class DarkPatternDetector {
               severity: signature.severity,
               checkDescription: signature.check,
               harmReport: category.harmReport,
-              element: detectionResult.element,
-              confidence: detectionResult.confidence
+              element: null,
+              confidence: 0.7
             });
           }
+        } catch(e) {
+          continue;
         }
       }
     }
-
+    
     return this.detections;
   }
 
-  applyCheck(signature, category, document) {
-    const check = signature.check;
-    let element = null;
-    let confidence = 0.5;
-
-    if (check.includes('default-checked') || check.includes('pre-checked')) {
-      const checkedInputs = document.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked');
-      for (const input of checkedInputs) {
-        if (input.closest('form') && !input.hasAttribute('data-user-explicit')) {
-          element = input;
-          confidence = 0.9;
-          break;
-        }
-      }
-    }
-
-    if (check.includes('Compare visual prominence') || check.includes('size, color contrast')) {
-      const prominentButtons = document.querySelectorAll('button, a.button, .btn');
-      for (const button of prominentButtons) {
-        const styles = window.getComputedStyle(button);
-        const fontSize = parseFloat(styles.fontSize);
-        if (fontSize > 20) {
-          const sibling = button.parentElement?.querySelector('button:not(:first-child), a:not(:first-child)');
-          if (sibling) {
-            const siblingStyles = window.getComputedStyle(sibling);
-            const siblingFontSize = parseFloat(siblingStyles.fontSize);
-            if (siblingFontSize < fontSize * 0.6) {
-              element = button;
-              confidence = 0.8;
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    if (check.includes('Monitor timer') || check.includes('countdown')) {
-      const timers = document.querySelectorAll('[class*="countdown"], [class*="timer"], [id*="countdown"], [id*="timer"]');
-      if (timers.length > 0) {
-        element = timers[0];
-        confidence = 0.7;
-      }
-    }
-
-    if (check.includes('guilt-inducing') || check.includes('emotionally loaded')) {
-      const guiltPhrases = ['I don\'t want', 'I don\'t care about', 'No thanks, I prefer'];
-      const allText = document.querySelectorAll('button, a, span, p');
-      for (const el of allText) {
-        for (const phrase of guiltPhrases) {
-          if (el.textContent?.toLowerCase().includes(phrase.toLowerCase())) {
-            element = el;
-            confidence = 0.85;
-            break;
-          }
-        }
-        if (element) break;
-      }
-    }
-
-    return element ? { element, confidence } : null;
-  }
-
   generateHarmReport() {
+    if (this.detections.length === 0) {
+      return {
+        url: window.location.href,
+        timestamp: new Date().toISOString(),
+        totalDetections: 0,
+        summary: '✅ No dark patterns detected.',
+        criticalIssues: [], highIssues: [], mediumIssues: [],
+        recommendations: []
+      };
+    }
+
     const critical = this.detections.filter(d => d.severity === 'critical');
     const high = this.detections.filter(d => d.severity === 'high');
     const medium = this.detections.filter(d => d.severity === 'medium');
@@ -159,40 +171,27 @@ class DarkPatternDetector {
       timestamp: new Date().toISOString(),
       totalDetections: this.detections.length,
       summary: '',
-      criticalIssues: critical.map(d => ({
-        pattern: d.categoryName,
-        harm: d.harmReport,
-        confidence: d.confidence
-      })),
-      highIssues: high.map(d => ({
-        pattern: d.categoryName,
-        harm: d.harmReport,
-        confidence: d.confidence
-      })),
-      mediumIssues: medium.map(d => ({
-        pattern: d.categoryName,
-        harm: d.harmReport,
-        confidence: d.confidence
-      })),
+      criticalIssues: critical.map(d => ({ pattern: d.categoryName, harm: d.harmReport, confidence: d.confidence })),
+      highIssues: high.map(d => ({ pattern: d.categoryName, harm: d.harmReport, confidence: d.confidence })),
+      mediumIssues: medium.map(d => ({ pattern: d.categoryName, harm: d.harmReport, confidence: d.confidence })),
       recommendations: []
     };
 
     if (critical.length > 0) {
-      report.summary = `CRITICAL: This site deploys ${critical.length} critically deceptive patterns. ${critical.map(d => d.harmReport).join(' ')}`;
-      report.recommendations.push('Consider abandoning this service entirely.');
+      report.summary = `🚨 ${critical.length} critically deceptive patterns detected!`;
+      report.recommendations.push('Consider abandoning this service.');
     } else if (high.length > 0) {
-      report.summary = `WARNING: ${high.length} high-severity manipulative patterns detected. This site is actively working against your interests.`;
-      report.recommendations.push('Proceed with extreme caution. Your choices are being engineered.');
+      report.summary = `⚠️ ${high.length} manipulative patterns found.`;
+      report.recommendations.push('Proceed with extreme caution.');
     } else if (medium.length > 0) {
-      report.summary = `NOTICE: ${medium.length} manipulative design patterns found. Your autonomy is being subtly undermined.`;
-    } else {
-      report.summary = 'No dark patterns detected. This site appears to respect your autonomy.';
+      report.summary = `📋 ${medium.length} subtle manipulative patterns.`;
     }
 
     return report;
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = DarkPatternDetector;
-}
+// Make available globally
+if (typeof window !== 'undefined') window.DarkPatternDetector = DarkPatternDetector;
+if (typeof module !== 'undefined' && module.exports) module.exports = DarkPatternDetector;
+console.log('[LIFE] Pattern Detector ready (Memory-Safe)');

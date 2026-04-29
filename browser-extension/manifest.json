@@ -7,22 +7,42 @@
   "homepage_url": "https://github.com/SXNGE4444/Project-LIFE-Agent",
   "permissions": [
     "storage",
-    "declarativeNetRequest",
     "activeTab",
     "webNavigation"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "https://*/*",
+    "http://*/*"
   ],
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ],
+      "exclude_matches": [
+        "*://*.google.com/recaptcha/*",
+        "*://*.hcaptcha.com/*",
+        "*://*.cloudflare.com/cdn-cgi/*",
+        "*://accounts.google.com/*",
+        "*://login.*/*",
+        "*://signin.*/*",
+        "*://*.zoom.us/*",
+        "*://teams.microsoft.com/*",
+        "*://meet.google.com/*"
+      ],
       "js": ["lib/pattern-detector.js", "lib/tracker-analyzer.js", "content-script.js"],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["config/*", "lib/*"],
+      "matches": ["https://*/*", "http://*/*"]
     }
   ],
   "action": {
@@ -43,7 +63,7 @@
     "rule_resources": [
       {
         "id": "tracker_rules",
-        "enabled": true,
+        "enabled": false,
         "path": "rules/tracker_rules.json"
       }
     ]

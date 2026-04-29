@@ -1,0 +1,95 @@
+{
+  "categories": [
+    {
+      "id": "urgency",
+      "name": "False Urgency",
+      "severity": "high",
+      "signatures": [
+        { "pattern": "Only {N} left in stock", "severity": "high", "check": "Compare claimed stock count against DOM data attributes" },
+        { "pattern": "Sale ends in", "severity": "critical", "check": "Monitor timer reset on page reload" },
+        { "pattern": "people are viewing this", "severity": "high", "check": "Check for randomized number generation in JS" }
+      ],
+      "harmReport": "This site is fabricating scarcity to force impulsive purchases."
+    },
+    {
+      "id": "misdirection",
+      "name": "Visual Misdirection",
+      "severity": "medium",
+      "signatures": [
+        { "pattern": "Accept All Cookies", "severity": "medium", "check": "Compare visual prominence: size, color contrast, position" },
+        { "pattern": "Manage Settings", "severity": "medium", "check": "Compare visual prominence against accept button" }
+      ],
+      "harmReport": "This interface is designed to trick your visual perception into the choice that benefits them."
+    },
+    {
+      "id": "forced_action",
+      "name": "Forced Action",
+      "severity": "high",
+      "signatures": [
+        { "pattern": "Sign up to continue reading", "severity": "high", "check": "Detect content blurring or overlay blocking scroll" },
+        { "pattern": "Sign in to continue", "severity": "high", "check": "Detect content blurring or overlay blocking scroll" }
+      ],
+      "harmReport": "Your access to content is being held hostage for your data or social reach."
+    },
+    {
+      "id": "sneaking",
+      "name": "Sneaking",
+      "severity": "critical",
+      "signatures": [
+        { "pattern": "pre-checked", "severity": "critical", "check": "Detect default-checked input elements" },
+        { "pattern": "auto-renewal", "severity": "high", "check": "Detect default-checked subscription toggles" }
+      ],
+      "harmReport": "Additional costs or items were added without your explicit knowledge."
+    },
+    {
+      "id": "obstruction",
+      "name": "Obstruction",
+      "severity": "critical",
+      "signatures": [
+        { "pattern": "call", "severity": "critical", "check": "Detect phone-call-only cancellation requirement" },
+        { "pattern": "delete account", "severity": "high", "check": "Measure click depth to reach deletion option" }
+      ],
+      "harmReport": "This company deliberately makes it hard to leave or protect your privacy."
+    },
+    {
+      "id": "confirmshaming",
+      "name": "Confirmshaming",
+      "severity": "medium",
+      "signatures": [
+        { "pattern": "I don't want", "severity": "medium", "check": "Detect emotionally loaded decline text" },
+        { "pattern": "I don't care", "severity": "medium", "check": "Scan for guilt-inducing language" }
+      ],
+      "harmReport": "This interface manipulates your emotions to extract data or money."
+    },
+    {
+      "id": "social_proof_fabrication",
+      "name": "Fabricated Social Proof",
+      "severity": "high",
+      "signatures": [
+        { "pattern": "bought this", "severity": "high", "check": "Check for randomized name/location in JS" },
+        { "pattern": "Verified Purchase", "severity": "medium", "check": "Analyze review metadata" }
+      ],
+      "harmReport": "Social proof signals on this page may be fabricated."
+    },
+    {
+      "id": "hidden_information",
+      "name": "Hidden Information",
+      "severity": "high",
+      "signatures": [
+        { "pattern": "fee", "severity": "high", "check": "Detect small font for pricing/fees" },
+        { "pattern": "terms", "severity": "high", "check": "Detect info in unexpanded accordions" }
+      ],
+      "harmReport": "Material information has been deliberately hidden from your view."
+    },
+    {
+      "id": "nagging",
+      "name": "Nagging",
+      "severity": "medium",
+      "signatures": [
+        { "pattern": "Open in App", "severity": "high", "check": "Detect app store interstitials" },
+        { "pattern": "newsletter", "severity": "medium", "check": "Track popup frequency" }
+      ],
+      "harmReport": "This site repeatedly interrupts your experience."
+    }
+  ]
+}
